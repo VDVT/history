@@ -1,7 +1,6 @@
 {
     "name": "vdvt/history",
     "description": "write history via hook eloquent",
-    "license": "BSD",
     "authors": [
         {
             "name": "Trinh Le",
