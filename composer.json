@@ -1,12 +1,11 @@
 {
     "name": "vdvt/history",
     "description": "write history via hook eloquent",
-    "license": "trinhle",
+    "license": "BSD",
     "authors": [
         {
             "name": "Trinh Le",
             "email": "lehuutrinh32@gmail.com",
-            "homepage": "Bigin Homepage"
         }
     ],
     "homepage": "https://github.com/vdvt/history",
