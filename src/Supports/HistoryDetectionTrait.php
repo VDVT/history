@@ -3,6 +3,7 @@
 namespace VDVT\History\Supports;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use VDVT\History\Constants\References;
 use VDVT\History\Events\SaveLogHistory;
 
@@ -63,7 +64,7 @@ trait HistoryDetectionTrait
      */
     protected static function bootHistoryDetectionTrait()
     {
-        if (config('vdvt.history.enable')) {
+        if (config('history.enable')) {
             foreach (static::getEventListeners() as $event) {
                 static::$event(function ($model) use ($event) {
                     $model->createLogHistory($event);
@@ -123,9 +124,9 @@ trait HistoryDetectionTrait
             $this->saveLogAttribute(
                 array_merge(
                     [
-                        'type' => \Config::get('vdvt.history.history_type.log'),
-                        'result' => \Config::get('vdvt.history.history_result_log.fields_changed'),
-                        'details' => __('vdvt.history.actions.created', [
+                        'type' => Config::get('history.history_type.log'),
+                        'result' => Config::get('history.history_result_log.fields_changed'),
+                        'details' => __('history.actions.created', [
                             'table' => $tableName,
                             'column' => $fieldName,
                             'value' => $primaryValue,
@@ -157,9 +158,9 @@ trait HistoryDetectionTrait
             $this->saveLogAttribute(
                 array_merge(
                     [
-                        'type' => \Config::get('vdvt.history.history_type.log'),
-                        'result' => \Config::get('vdvt.history.history_result_log.fields_changed'),
-                        'details' => __('vdvt.history.actions.deleted', [
+                        'type' => Config::get('history.history_type.log'),
+                        'result' => Config::get('history.history_result_log.fields_changed'),
+                        'details' => __('history.actions.deleted', [
                             'table' => $tableName,
                             'column' => $fieldName,
                             'value' => $primaryValue,
@@ -255,9 +256,9 @@ trait HistoryDetectionTrait
         $this->saveLogAttribute(
             array_merge(
                 [
-                    'type' => \Config::get('vdvt.history.history_type.log'),
-                    'result' => \Config::get('vdvt.history.history_result_log.fields_changed'),
-                    'details' => __('vdvt.history.actions.updated', [
+                    'type' => Config::get('history.history_type.log'),
+                    'result' => Config::get('history.history_result_log.fields_changed'),
+                    'details' => __('history.actions.updated', [
                         'table' => $tableName,
                         'column' => $fieldName,
                         'origin' => $origin,

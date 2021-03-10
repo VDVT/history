@@ -43,7 +43,7 @@ trait HistoryValueAttributeTrait
      */
     protected function getHistoryDisplayTable()
     {
-        return config("vdvt.history.nameTables.{$this->getTable()}") ?: $this->getTable();
+        return config("history.nameTables.{$this->getTable()}") ?: $this->getTable();
     }
 
     /**

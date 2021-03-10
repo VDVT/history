@@ -61,6 +61,6 @@ class AuditHistory extends Model
      */
     public function getCreatedAtAttribute($value)
     {
-        return $value ? date(config('vdvt.format.datetime'), strtotime($value)) : '';
+        return $value ? date(config('vdvt.history.history.format.datetime'), strtotime($value)) : '';
     }
 }

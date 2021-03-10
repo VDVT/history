@@ -3,6 +3,7 @@
 namespace VDVT\History;
 
 use Illuminate\Support\ServiceProvider;
+use VDVT\History\Events\SaveLogHistory;
 
 class HistoryServiceProvider extends ServiceProvider
 {
@@ -13,15 +14,23 @@ class HistoryServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'vdvt');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'vdvt');
-        // $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
-
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
+
+        $this->app->booted(function () {
+            $saveLogHistoryHandler = config('history.event_handler');
+            if (class_exists($saveLogHistoryHandler)) {
+                $this
+                    ->app['events']
+                    ->listen(
+                        SaveLogHistory::class,
+                        $saveLogHistoryHandler
+                    );
+
+            }
+        });
     }
 
     /**
@@ -63,7 +72,7 @@ class HistoryServiceProvider extends ServiceProvider
 
         $this->publishes([
             __DIR__ . '/../database/migrations' => database_path('migrations'),
-        ], 'bigin.history.migrations');
+        ], 'history.migrations');
 
         // Publishing the translation files.
         $this->publishes([

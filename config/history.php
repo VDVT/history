@@ -1,5 +1,7 @@
 <?php
 
+use VDVT\History\Events\Handlers\SaveLogHistoryHandle;
+
 return [
     /**
      *
@@ -33,4 +35,8 @@ return [
     'format' => [
         'datetime' => 'm/d/Y H:i',
     ],
+    /**
+     * Event handle
+     */
+    'event_handler' => SaveLogHistoryHandle::class,
 ];
