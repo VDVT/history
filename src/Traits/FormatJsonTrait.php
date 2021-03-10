@@ -51,7 +51,7 @@ trait FormatJsonTrait
         $tableName = $this->getHistoryDisplayTable();
 
         return [
-            'content' => __('vdvt.history.actions.' . ($isCreated ? 'created_with_value' : 'deleted_with_value'), [
+            'content' => __('history::history.actions.' . ($isCreated ? 'created_with_value' : 'deleted_with_value'), [
                 'name' => $fieldName,
                 'value' => $value,
             ]),

@@ -1,6 +1,6 @@
 <?php
 
-namespace VDVT\History\Supports;
+namespace VDVT\History\Eloquent;
 
 use Illuminate\Database\Eloquent\Model;
 use VDVT\History\Traits\DetectionTrait;

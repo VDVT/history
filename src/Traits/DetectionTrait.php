@@ -78,7 +78,7 @@ trait DetectionTrait
             array_merge(
                 [
                     'type' => References::HISTORY_EVENT_CREATED,
-                    'detail' => __('history.actions.created', [
+                    'detail' => __('history::history.actions.created', [
                         'table' => $tableName,
                         'column' => $fieldName,
                         'value' => $primaryValue,
@@ -113,7 +113,7 @@ trait DetectionTrait
             array_merge(
                 [
                     'type' => References::HISTORY_EVENT_DELETED,
-                    'detail' => __('history.actions.deleted', [
+                    'detail' => __('history::history.actions.deleted', [
                         'table' => $tableName,
                         'column' => $fieldName,
                         'value' => $primaryValue,
@@ -214,7 +214,7 @@ trait DetectionTrait
                 [
                     'type' => References::HISTORY_EVENT_UPDATED,
                     'result' => Config::get('history.history_result_log.fields_changed'),
-                    'detail' => __('history.actions.updated', [
+                    'detail' => __('history::history.actions.updated', [
                         'table' => $tableName,
                         'column' => $fieldName,
                         'origin' => $origin,

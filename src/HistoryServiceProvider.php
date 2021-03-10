@@ -14,6 +14,8 @@ class HistoryServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'history');
+
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -68,16 +70,16 @@ class HistoryServiceProvider extends ServiceProvider
         // Publishing the configuration file.
         $this->publishes([
             __DIR__ . '/../config/history.php' => config_path('history.php'),
-        ], 'history.config');
+        ], 'history');
 
         $this->publishes([
             __DIR__ . '/../database/migrations' => database_path('migrations'),
-        ], 'history.migrations');
+        ], 'history');
 
         // Publishing the translation files.
         $this->publishes([
             __DIR__ . '/../resources/lang' => resource_path('lang/vendor/vdvt'),
-        ], 'history.views');
+        ], 'history');
 
         // Registering package commands.
         $this->commands([]);
