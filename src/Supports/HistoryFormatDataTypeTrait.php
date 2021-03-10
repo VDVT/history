@@ -4,13 +4,14 @@ namespace VDVT\History\Supports;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 trait HistoryFormatDataTypeTrait
 {
+    use \VDVT\Support\Traits\UserTimezoneTrait;
+
     /**
      * @var string
      */
@@ -81,26 +82,6 @@ trait HistoryFormatDataTypeTrait
      * @var Array
      */
     protected $percentAttributes = [];
-
-    /**
-     * Get TimeZone
-     *
-     * @return String
-     */
-    final protected function getDefaultTimezone(string $timezone = null): string
-    {
-        if ($timezone) {
-            return $timezone;
-        }
-
-        $authenticated = Auth::user();
-
-        if ($authenticated && $authenticated->timezone) {
-            return $authenticated->timezone;
-        }
-
-        return $this->getDefaultTimezone(\Config::get('app.timezone') ?: 'UTC');
-    }
 
     /**
      * [formatDateTimeType ]
