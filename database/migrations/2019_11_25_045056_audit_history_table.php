@@ -3,7 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
-class VdvtAuditHistoryTable extends Migration
+class AuditHistoryTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,15 +12,16 @@ class VdvtAuditHistoryTable extends Migration
      */
     public function up()
     {
-        Schema::create('vdvt_audit_histories', function ($table) {
+        Schema::create('audit_histories', function ($table) {
             $table->increments('id');
             $table->integer('author_id')->nullable();
             $table->integer('author_type')->nullable();
-            $table->text('detail')->nullable();
-            $table->string('type')->unsigned()->nullable();
-            $table->integer('result')->unsigned()->nullable();
             $table->string('target_type')->nullable();
             $table->integer('target_id')->nullable();
+            $table->text('detail')->nullable();
+            $table->text('old_value')->nullable();
+            $table->text('new_value')->nullable();
+            $table->string('type')->unsigned()->nullable();
             $table->timestamps();
             $table->engine = 'InnoDB';
         });
@@ -33,6 +34,6 @@ class VdvtAuditHistoryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vdvt_audit_histories');
+        Schema::dropIfExists('audit_histories');
     }
 }

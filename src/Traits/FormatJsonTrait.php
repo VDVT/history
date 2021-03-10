@@ -1,7 +1,7 @@
 <?php
-namespace VDVT\History\Supports;
+namespace VDVT\History\Traits;
 
-trait HistoryFormatJsonTrait
+trait FormatJsonTrait
 {
     /**
      * [$relationShipAttributes description]

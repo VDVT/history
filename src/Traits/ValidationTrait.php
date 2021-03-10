@@ -1,8 +1,8 @@
 <?php
 
-namespace VDVT\History\Supports;
+namespace VDVT\History\Traits;
 
-trait HistoryValidationTrait
+trait ValidationTrait
 {
     /**
      * [validation description]

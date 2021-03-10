@@ -11,7 +11,7 @@ class AuditHistory extends Model
      *
      * @var string
      */
-    protected $table = 'vdvt_audit_histories';
+    protected $table = 'audit_histories';
 
     protected $fillable = [
         'target_type',
@@ -19,9 +19,24 @@ class AuditHistory extends Model
         'author_id',
         'author_type',
         'type',
-        'result',
         'detail',
+        'old_value',
+        'new_value',
     ];
+
+    /**
+     * __construct
+     *
+     * @param array $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+        if ($fillable = config('history.fillable')) {
+            $this->fillable = $fillable;
+        }
+
+        parent::__construct($attributes);
+    }
 
     /**
      * The date fields for the model.clear
@@ -61,6 +76,6 @@ class AuditHistory extends Model
      */
     public function getCreatedAtAttribute($value)
     {
-        return $value ? date(config('vdvt.history.history.format.datetime'), strtotime($value)) : '';
+        return $value ? date(config('history.format.datetime'), strtotime($value)) : '';
     }
 }

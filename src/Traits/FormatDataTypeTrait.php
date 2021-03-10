@@ -1,16 +1,17 @@
 <?php
 
-namespace VDVT\History\Supports;
+namespace VDVT\History\Traits;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use VDVT\Support\Traits\UserTimezoneTrait;
 
-trait HistoryFormatDataTypeTrait
+trait FormatDataTypeTrait
 {
-    use \VDVT\Support\Traits\UserTimezoneTrait;
+    use UserTimezoneTrait;
 
     /**
      * @var string
@@ -153,7 +154,7 @@ trait HistoryFormatDataTypeTrait
      * @param  mixed $value
      * @return mixed
      */
-    protected function formatBoolean($attribute, $value)
+    protected function historyFormatBoolean($attribute, $value)
     {
         if (!is_null($value)) {
             $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
@@ -263,8 +264,8 @@ trait HistoryFormatDataTypeTrait
             $origin = $this->historyFormatDateTime($origin);
             $current = $this->historyFormatDateTime($current);
         } elseif (in_array($columnType, $this->typeBoolean)) {
-            $current = $this->formatBoolean($attribute, $current);
-            $origin = $this->formatBoolean($attribute, $origin);
+            $current = $this->historyFormatBoolean($attribute, $current);
+            $origin = $this->historyFormatBoolean($attribute, $origin);
         } else {
             $origin = !!$origin ? $origin : null;
             $current = !!$current ? $current : null;

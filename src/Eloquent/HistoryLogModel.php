@@ -3,10 +3,11 @@
 namespace VDVT\History\Supports;
 
 use Illuminate\Database\Eloquent\Model;
+use VDVT\History\Traits\DetectionTrait;
 
 abstract class ModelHistoryLog extends Model
 {
-    use HistoryDetectionTrait;
+    use DetectionTrait;
 
     /**
      * Create a new Eloquent model instance.
