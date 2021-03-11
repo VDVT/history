@@ -2,10 +2,7 @@
 
 namespace VDVT\History\Traits;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use VDVT\History\Constants\References;
-use VDVT\History\Events\SaveLogHistory;
 
 trait DetectionTrait
 {
@@ -13,6 +10,8 @@ trait DetectionTrait
     use ValidationTrait;
     use FormatDataTypeTrait;
     use ValueAttributeTrait;
+    use PathTrait;
+    use StoreTrait;
 
     /**
      * Allow store log create
@@ -49,7 +48,7 @@ trait DetectionTrait
         if (config('history.enable')) {
             foreach (static::getEventListeners() as $event => $fn) {
                 static::$event(function ($model) use ($fn) {
-                    $this->{$fn}();
+                    $model->{$fn}();
                 });
             }
         }
@@ -67,26 +66,22 @@ trait DetectionTrait
             return false;
         }
 
-        list(
-            'tableName' => $tableName,
-            'primaryValue' => $primaryValue,
-            'fieldName' => $fieldName,
-            'historyData' => $historyData
-        ) = $this->getDataCreateOrDeleteHistory($this->createAttributes, 'getContentCreateObserver');
+        $payload = $this->getDataCreateOrDeleteHistory('getContentCreateObserver');
 
         $this->saveLogAttribute(
             array_merge(
                 [
                     'type' => References::HISTORY_EVENT_CREATED,
                     'detail' => __('history::history.actions.created', [
-                        'table' => $tableName,
-                        'column' => $fieldName,
-                        'value' => $primaryValue,
+                        'table' => $payload['tableName'],
+                        'column' => $payload['fieldName'],
+                        'value' => $payload['primaryValue'],
                     ]),
+                    'path' => $this->getPathHistory(),
                 ],
-                $historyData
+                $payload['historyData']
             ),
-            References::HISTORY_EVENT_CREATED,
+            References::HISTORY_EVENT_CREATED
         );
     }
 
@@ -102,26 +97,62 @@ trait DetectionTrait
             return false;
         }
 
-        list(
-            'tableName' => $tableName,
-            'primaryValue' => $primaryValue,
-            'fieldName' => $fieldName,
-            'historyData' => $historyData
-        ) = $this->getDataCreateOrDeleteHistory('getContentDeleteObserver');
+        $payload = $this->getDataCreateOrDeleteHistory('getContentDeleteObserver');
 
         $this->saveLogAttribute(
             array_merge(
                 [
                     'type' => References::HISTORY_EVENT_DELETED,
                     'detail' => __('history::history.actions.deleted', [
-                        'table' => $tableName,
-                        'column' => $fieldName,
-                        'value' => $primaryValue,
+                        'table' => $payload['tableName'],
+                        'column' => $payload['fieldName'],
+                        'value' => $payload['primaryValue'],
                     ]),
+                    'path' => $this->getPathHistory(),
                 ],
-                $historyData
+                $payload['historyData']
             ),
-            References::HISTORY_EVENT_DELETED,
+            References::HISTORY_EVENT_DELETED
+        );
+    }
+
+    /**
+     * @param  mixed $attribute
+     * @param  mixed $origin
+     * @param  mixed $current
+     * @return void
+     */
+    protected function createOrUpdateLogHistory($attribute, $origin, $current, $path = null)
+    {
+        list($origin, $current, $columnType) = $this->getHistoryDisplayValueAttribute($attribute, $origin, $current);
+
+        # GET display target update
+        if ($this->isDisplayHistoryUpdate ?? false) {
+            $targetName = " \"" . $this->getAttribute($this->displayHistoryUpdate ?? 'id') . "\"";
+        }
+
+        if (method_exists($this, 'getContentUpdateObserver')) {
+            $override = $this->getContentUpdateObserver($attribute, $origin, $current) ?: [];
+        }
+
+        $this->saveLogAttribute(
+            array_merge(
+                [
+                    'type' => References::HISTORY_EVENT_UPDATED,
+                    'detail' => __('history::history.actions.updated', [
+                        'table' => $this->getHistoryDisplayTable(),
+                        'column' => $this->getHistoryDisplayAttribute($attribute),
+                        'origin' => $origin,
+                        'current' => $current,
+                        'target' => isset($targetName) ? $targetName : null,
+                    ]),
+                    'old_value' => $origin,
+                    'new_value' => $current,
+                    'path' => $path,
+                ],
+                isset($override) ? $override : []
+            ),
+            References::HISTORY_EVENT_UPDATED
         );
     }
 
@@ -145,22 +176,27 @@ trait DetectionTrait
             return false;
         }
 
+        $path = $this->getPathHistory();
+
         foreach ($fieldsChanged as $attribute => $newValue) {
             # code...
             if ($this->getOriginal($attribute) == null && empty($newValue)) {
                 continue;
             }
 
-            $origin = $this->getOriginalMutator($attribute);
-            $current = $this->getNewValueMutator($attribute, $newValue);
+            $payload = [
+                $attribute,
+                $this->getOriginalMutator($attribute),
+                $this->getNewValueMutator($attribute, $newValue),
+            ];
 
             # historyValidation model change
             if (
                 $this->historyValidation(
-                    ...$this->formatAttributeWithType($attribute, $origin, $current)
+                    ...$this->formatAttributeWithType(...$payload)
                 )
             ) {
-                $this->createOrUpdateLogHistory($attribute, $origin, $current);
+                $this->createOrUpdateLogHistory(...array_merge($payload, $path));
             }
         }
     }
@@ -182,71 +218,6 @@ trait DetectionTrait
         }
 
         return compact('tableName', 'primaryValue', 'fieldName', 'dataHistory');
-    }
-
-    /**
-     * @param  mixed $attribute
-     * @param  mixed $origin
-     * @param  mixed $current
-     * @return void
-     */
-    protected function createOrUpdateLogHistory($attribute, $origin, $current)
-    {
-        $tableName = $this->getHistoryDisplayTable();
-        $fieldName = $this->getHistoryDisplayAttribute($attribute);
-        list($origin, $current, $columnType) = $this->getHistoryDisplayValueAttribute($attribute, $origin, $current);
-        $origin = is_array($origin) ? json_encode($origin) : $origin;
-        $current = is_array($current) ? json_encode($current) : $current;
-
-        # GET display target update
-        $targetName = null;
-        if ($this->isDisplayHistoryUpdate ?? false) {
-            $targetName = " \"" . $this->getAttribute($this->displayHistoryUpdate ?? 'id') . "\"";
-        }
-
-        $override = array();
-        if (method_exists($this, 'getContentUpdateObserver')) {
-            $override = $this->getContentUpdateObserver($attribute, $origin, $current) ?: [];
-        }
-
-        $this->saveLogAttribute(
-            array_merge(
-                [
-                    'type' => References::HISTORY_EVENT_UPDATED,
-                    'result' => Config::get('history.history_result_log.fields_changed'),
-                    'detail' => __('history::history.actions.updated', [
-                        'table' => $tableName,
-                        'column' => $fieldName,
-                        'origin' => $origin,
-                        'current' => $current,
-                        'target' => $targetName,
-                    ]),
-                    'old_value' => $origin,
-                    'new_value' => $current,
-                ],
-                $override
-            ),
-            References::HISTORY_EVENT_UPDATED
-        );
-    }
-
-    /**
-     * @return void
-     */
-    protected function saveLogAttribute(array $data = [], string $type)
-    {
-        event(new SaveLogHistory
-            (
-                array_merge(
-                    [
-                        'user_id' => Auth::id(),
-                    ],
-                    $this->getTargetHistory(),
-                    $data
-                ),
-                $type
-            )
-        );
     }
 
     /**

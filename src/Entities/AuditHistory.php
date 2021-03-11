@@ -14,6 +14,7 @@ class AuditHistory extends Model
     protected $table = 'audit_histories';
 
     protected $fillable = [
+        'path',
         'target_type',
         'target_id',
         'author_id',

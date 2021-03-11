@@ -45,17 +45,4 @@ trait ValueAttributeTrait
     {
         return config("history.nameTables.{$this->getTable()}") ?: $this->getTable();
     }
-
-    /**
-     * @return mixed
-     */
-    protected function getTargetHistory(): array
-    {
-        $logTargetAttributes = property_exists($this, 'logTargetAttributes') ? $this->logTargetAttributes : [];
-
-        return [
-            'target_type' => $this->getMorphClass(),
-            'target_id' => $this->getAttribute(array_get($logTargetAttributes, 'primary', 'id')),
-        ];
-    }
 }

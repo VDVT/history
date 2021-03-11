@@ -130,7 +130,7 @@ trait FormatDataTypeTrait
             // Finally, we will just assume this date is in the format used by default on
             // the database connection and use that format to create the Carbon object
             // that is returned back out to the developers after we convert it here.
-            elseif (!$value instanceof DateTime) {
+            elseif (!$value instanceof \DateTime) {
                 $format = $this->getDateFormat();
                 $dt = Carbon::createFromFormat($format, $value, $timezone);
                 return $dt->format($formatTime);
@@ -190,7 +190,11 @@ trait FormatDataTypeTrait
     protected function historyFormatFileMediaField($value)
     {
         if (!is_null($value)) {
-            return end(...explode('/', $value));
+            return end(...
+                [
+                    explode('/', $value),
+                ]
+            );
         }
     }
 
@@ -289,7 +293,7 @@ trait FormatDataTypeTrait
      * @param  mixed $current
      * @return array
      */
-    public function getHistoryDisplayValueAttribute($attribute, $origin, $current): array
+    public function getHistoryDisplayValueAttribute($attribute, $origin, $current, $isEndcode = true): array
     {
         list($origin, $current, $columnType) = $this->formatAttributeWithType($attribute, $origin, $current);
 
@@ -336,6 +340,11 @@ trait FormatDataTypeTrait
         if (!in_array($attribute, $this->ignoreFormatAttributes)) {
             $origin = is_null($origin) ? $this->displayEmpty : $origin;
             $current = is_null($current) ? $this->displayEmpty : $current;
+        }
+
+        if ($isEndcode) {
+            $origin = is_array($origin) ? json_encode($origin) : $origin;
+            $current = is_array($current) ? json_encode($current) : $current;
         }
 
         return [$origin, $current, $columnType];
