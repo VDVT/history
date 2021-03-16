@@ -5,7 +5,7 @@ namespace VDVT\History\Traits;
 trait TargetTrait
 {
     /**
-     * @return mixed
+     * @return array
      */
     protected function getTargetHistory(): array
     {

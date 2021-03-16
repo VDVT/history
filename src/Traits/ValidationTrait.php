@@ -5,12 +5,13 @@ namespace VDVT\History\Traits;
 trait ValidationTrait
 {
     /**
-     * [validation description]
-     * @param  [type] $origin  [description]
-     * @param  [type] $current [description]
-     * @return [type]          [description]
+     * Check value to allow write log
+     *
+     * @param  mixed $origin
+     * @param  mixed $current
+     * @return bool
      */
-    protected function historyValidation($origin, $current)
+    protected function historyValidation($origin, $current): bool
     {
         if (is_bool($current)) {
             return filter_var($origin, FILTER_VALIDATE_BOOLEAN) !== $current;

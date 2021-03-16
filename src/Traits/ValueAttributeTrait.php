@@ -39,9 +39,9 @@ trait ValueAttributeTrait
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    protected function getHistoryDisplayTable()
+    protected function getHistoryDisplayTable(): string
     {
         return config("history.nameTables.{$this->getTable()}") ?: $this->getTable();
     }

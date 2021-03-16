@@ -3,6 +3,7 @@
 namespace VDVT\History\Traits;
 
 use VDVT\History\Constants\References;
+use VDVT\History\Events\CreatedHistory;
 
 trait DetectionTrait
 {
@@ -117,46 +118,6 @@ trait DetectionTrait
     }
 
     /**
-     * @param  mixed $attribute
-     * @param  mixed $origin
-     * @param  mixed $current
-     * @return void
-     */
-    protected function createOrUpdateLogHistory($attribute, $origin, $current, $path = null)
-    {
-        list($origin, $current, $columnType) = $this->getHistoryDisplayValueAttribute($attribute, $origin, $current);
-
-        # GET display target update
-        if ($this->isDisplayHistoryUpdate ?? false) {
-            $targetName = " \"" . $this->getAttribute($this->displayHistoryUpdate ?? 'id') . "\"";
-        }
-
-        if (method_exists($this, 'getContentUpdateObserver')) {
-            $override = $this->getContentUpdateObserver($attribute, $origin, $current) ?: [];
-        }
-
-        $this->saveLogAttribute(
-            array_merge(
-                [
-                    'type' => References::HISTORY_EVENT_UPDATED,
-                    'detail' => __('history::history.actions.updated', [
-                        'table' => $this->getHistoryDisplayTable(),
-                        'column' => $this->getHistoryDisplayAttribute($attribute),
-                        'origin' => $origin,
-                        'current' => $current,
-                        'target' => isset($targetName) ? $targetName : null,
-                    ]),
-                    'old_value' => $origin,
-                    'new_value' => $current,
-                    'path' => $path,
-                ],
-                isset($override) ? $override : []
-            ),
-            References::HISTORY_EVENT_UPDATED
-        );
-    }
-
-    /**
      * Handle the User "updated" event.
      *
      * @param  \App\User  $user
@@ -199,6 +160,54 @@ trait DetectionTrait
                 $this->createOrUpdateLogHistory(...array_merge($payload, $path));
             }
         }
+
+        event(new CreatedHistory
+            (
+                $this,
+                $path,
+                References::HISTORY_EVENT_UPDATED
+            )
+        );
+    }
+
+    /**
+     * @param  mixed $attribute
+     * @param  mixed $origin
+     * @param  mixed $current
+     * @return void
+     */
+    protected function createOrUpdateLogHistory($attribute, $origin, $current, $path = null)
+    {
+        list($origin, $current, $columnType) = $this->getHistoryDisplayValueAttribute($attribute, $origin, $current);
+
+        # GET display target update
+        if ($this->isDisplayHistoryUpdate ?? false) {
+            $targetName = " \"" . $this->getAttribute($this->displayHistoryUpdate ?? 'id') . "\"";
+        }
+
+        if (method_exists($this, 'getContentUpdateObserver')) {
+            $override = $this->getContentUpdateObserver($attribute, $origin, $current) ?: [];
+        }
+
+        $this->saveLogAttribute(
+            array_merge(
+                [
+                    'type' => References::HISTORY_EVENT_UPDATED,
+                    'detail' => __('history::history.actions.updated', [
+                        'table' => $this->getHistoryDisplayTable(),
+                        'column' => $this->getHistoryDisplayAttribute($attribute),
+                        'origin' => $origin,
+                        'current' => $current,
+                        'target' => isset($targetName) ? $targetName : null,
+                    ]),
+                    'old_value' => $origin,
+                    'new_value' => $current,
+                    'path' => $path,
+                ],
+                isset($override) ? $override : []
+            ),
+            References::HISTORY_EVENT_UPDATED
+        );
     }
 
     /**

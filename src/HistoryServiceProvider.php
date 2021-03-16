@@ -3,6 +3,7 @@
 namespace VDVT\History;
 
 use Illuminate\Support\ServiceProvider;
+use VDVT\History\Events\CreatedHistory;
 use VDVT\History\Events\SaveLogHistory;
 
 class HistoryServiceProvider extends ServiceProvider
@@ -22,15 +23,20 @@ class HistoryServiceProvider extends ServiceProvider
         }
 
         $this->app->booted(function () {
-            $saveLogHistoryHandler = config('history.event_handler');
-            if (class_exists($saveLogHistoryHandler)) {
-                $this
-                    ->app['events']
-                    ->listen(
-                        SaveLogHistory::class,
-                        $saveLogHistoryHandler
-                    );
 
+            foreach ([
+                CreatedHistory::class => config('history.event_handler.created'),
+                SaveLogHistory::class => config('history.event_handler.store'),
+            ] as $event => $eventHandler) {
+                # code...
+                if ($eventHandler && class_exists($eventHandler)) {
+                    $this
+                        ->app['events']
+                        ->listen(
+                            $event,
+                            $eventHandler
+                        );
+                }
             }
         });
     }

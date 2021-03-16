@@ -1,5 +1,6 @@
 <?php
 
+use VDVT\History\Events\Handlers\CreatedHistoryHandle;
 use VDVT\History\Events\Handlers\SaveLogHistoryHandle;
 
 return [
@@ -38,5 +39,8 @@ return [
     /**
      * Event handle
      */
-    'event_handler' => SaveLogHistoryHandle::class,
+    'event_handler' => [
+        'store' => SaveLogHistoryHandle::class,
+        'created' => CreatedHistoryHandle::class,
+    ],
 ];

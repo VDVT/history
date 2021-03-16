@@ -3,6 +3,8 @@
 namespace VDVT\History\Traits;
 
 use Illuminate\Support\Facades\Auth;
+use VDVT\History\Constants\References;
+use VDVT\History\Events\CreatedHistory;
 use VDVT\History\Events\SaveLogHistory;
 
 trait StoreTrait
@@ -26,5 +28,18 @@ trait StoreTrait
                 $type
             )
         );
+
+        if (in_array($type, [
+            References::HISTORY_EVENT_CREATED,
+            References::HISTORY_EVENT_DELETED,
+        ])) {
+            event(new CreatedHistory
+                (
+                    $this,
+                    array_get($data, 'path'),
+                    $type
+                )
+            );
+        }
     }
 }
