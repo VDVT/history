@@ -4,6 +4,7 @@ namespace VDVT\History\Events;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Event;
 
 class CreatedHistory extends Event
 {

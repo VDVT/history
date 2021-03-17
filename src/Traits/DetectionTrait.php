@@ -157,7 +157,7 @@ trait DetectionTrait
                     ...$this->formatAttributeWithType(...$payload)
                 )
             ) {
-                $this->createOrUpdateLogHistory(...array_merge($payload, $path));
+                $this->createOrUpdateLogHistory(...array_merge($payload, [$path]));
             }
         }
 
@@ -178,7 +178,7 @@ trait DetectionTrait
      */
     protected function createOrUpdateLogHistory($attribute, $origin, $current, $path = null)
     {
-        list($origin, $current, $columnType) = $this->getHistoryDisplayValueAttribute($attribute, $origin, $current);
+        list($originDisplay, $currentDisplay) = $this->getHistoryDisplayValueAttribute($attribute, $origin, $current);
 
         # GET display target update
         if ($this->isDisplayHistoryUpdate ?? false) {
@@ -186,7 +186,7 @@ trait DetectionTrait
         }
 
         if (method_exists($this, 'getContentUpdateObserver')) {
-            $override = $this->getContentUpdateObserver($attribute, $origin, $current) ?: [];
+            $override = $this->getContentUpdateObserver($attribute, $originDisplay, $currentDisplay) ?: [];
         }
 
         $this->saveLogAttribute(
@@ -196,8 +196,8 @@ trait DetectionTrait
                     'detail' => __('history::history.actions.updated', [
                         'table' => $this->getHistoryDisplayTable(),
                         'column' => $this->getHistoryDisplayAttribute($attribute),
-                        'origin' => $origin,
-                        'current' => $current,
+                        'origin' => $originDisplay,
+                        'current' => $currentDisplay,
                         'target' => isset($targetName) ? $targetName : null,
                     ]),
                     'column' => $attribute,

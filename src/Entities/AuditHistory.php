@@ -23,6 +23,8 @@ class AuditHistory extends Model
         'detail',
         'old_value',
         'new_value',
+        'column',
+        'table',
     ];
 
     /**

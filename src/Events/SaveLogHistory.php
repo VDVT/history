@@ -2,8 +2,13 @@
 
 namespace VDVT\History\Events;
 
-class SaveLogHistory
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Event;
+
+class SaveLogHistory extends Event
 {
+    use SerializesModels;
+
     /**
      * @var Array
      */

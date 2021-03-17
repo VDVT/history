@@ -275,7 +275,7 @@ trait FormatDataTypeTrait
             $current = !!$current ? $current : null;
         }
 
-        return [$origin, $current, $columnType];
+        return [$origin, $current];
     }
 
     /**
@@ -295,7 +295,7 @@ trait FormatDataTypeTrait
      */
     public function getHistoryDisplayValueAttribute($attribute, $origin, $current, $isEndcode = true): array
     {
-        list($origin, $current, $columnType) = $this->formatAttributeWithType($attribute, $origin, $current);
+        list($origin, $current) = $this->formatAttributeWithType($attribute, $origin, $current);
 
         // Check overide data
         $callback = 'getHistoryDisplayValue' . Str::studly($attribute) . 'Attribute';
@@ -347,6 +347,6 @@ trait FormatDataTypeTrait
             $current = is_array($current) ? json_encode($current) : $current;
         }
 
-        return [$origin, $current, $columnType];
+        return [$origin, $current];
     }
 }
