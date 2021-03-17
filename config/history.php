@@ -4,17 +4,6 @@ use VDVT\History\Events\Handlers\CreatedHistoryHandle;
 use VDVT\History\Events\Handlers\SaveLogHistoryHandle;
 
 return [
-    /**
-     *
-     */
-    'history_type' => [],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Custom display table name
-    |--------------------------------------------------------------------------
-     */
-    'history_result_log' => [],
     /*
     |--------------------------------------------------------------------------
     | Custom display table name

@@ -46,7 +46,7 @@ trait DetectionTrait
      */
     protected static function bootDetectionTrait()
     {
-        if (config('history.enable')) {
+        if (config('vdvt.history.history.enable')) {
             foreach (static::getEventListeners() as $event => $fn) {
                 static::$event(function ($model) use ($fn) {
                     $model->{$fn}();
@@ -73,14 +73,14 @@ trait DetectionTrait
             array_merge(
                 [
                     'type' => References::HISTORY_EVENT_CREATED,
-                    'detail' => __('history::history.actions.created', [
+                    'detail' => __('vdvt/history::history.actions.created', [
                         'table' => $payload['tableName'],
                         'column' => $payload['fieldName'],
                         'value' => $payload['primaryValue'],
                     ]),
                     'path' => $this->getPathHistory(),
                 ],
-                $payload['historyData']
+                $payload['dataHistory']
             ),
             References::HISTORY_EVENT_CREATED
         );
@@ -104,14 +104,14 @@ trait DetectionTrait
             array_merge(
                 [
                     'type' => References::HISTORY_EVENT_DELETED,
-                    'detail' => __('history::history.actions.deleted', [
+                    'detail' => __('vdvt/history::history.actions.deleted', [
                         'table' => $payload['tableName'],
                         'column' => $payload['fieldName'],
                         'value' => $payload['primaryValue'],
                     ]),
                     'path' => $this->getPathHistory(),
                 ],
-                $payload['historyData']
+                $payload['dataHistory']
             ),
             References::HISTORY_EVENT_DELETED
         );
@@ -193,7 +193,7 @@ trait DetectionTrait
             array_merge(
                 [
                     'type' => References::HISTORY_EVENT_UPDATED,
-                    'detail' => __('history::history.actions.updated', [
+                    'detail' => __('vdvt/history::history.actions.updated', [
                         'table' => $this->getHistoryDisplayTable(),
                         'column' => $this->getHistoryDisplayAttribute($attribute),
                         'origin' => $originDisplay,

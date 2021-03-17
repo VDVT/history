@@ -43,6 +43,6 @@ trait ValueAttributeTrait
      */
     protected function getHistoryDisplayTable(): string
     {
-        return config("history.nameTables.{$this->getTable()}") ?: $this->getTable();
+        return config("vdvt.history.history.nameTables.{$this->getTable()}") ?: $this->getTable();
     }
 }

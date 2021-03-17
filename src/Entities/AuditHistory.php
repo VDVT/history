@@ -34,7 +34,7 @@ class AuditHistory extends Model
      */
     public function __construct(array $attributes = [])
     {
-        if ($fillable = config('history.fillable')) {
+        if ($fillable = config('vdvt.history.history.fillable')) {
             $this->fillable = $fillable;
         }
 
@@ -79,6 +79,6 @@ class AuditHistory extends Model
      */
     public function getCreatedAtAttribute($value)
     {
-        return $value ? date(config('history.format.datetime'), strtotime($value)) : '';
+        return $value ? date(config('vdvt.history.history.format.datetime'), strtotime($value)) : '';
     }
 }

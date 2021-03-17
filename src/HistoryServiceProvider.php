@@ -15,7 +15,7 @@ class HistoryServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'history');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'vdvt/history');
 
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
@@ -23,10 +23,9 @@ class HistoryServiceProvider extends ServiceProvider
         }
 
         $this->app->booted(function () {
-
             foreach ([
-                CreatedHistory::class => config('history.event_handler.created'),
-                SaveLogHistory::class => config('history.event_handler.store'),
+                CreatedHistory::class => config('vdvt.history.history.event_handler.created'),
+                SaveLogHistory::class => config('vdvt.history.history.event_handler.store'),
             ] as $event => $eventHandler) {
                 # code...
                 if ($eventHandler && class_exists($eventHandler)) {
@@ -48,7 +47,7 @@ class HistoryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/history.php', 'history');
+        $this->mergeConfigFrom(__DIR__ . '/../config/history.php', 'vdvt.history.history');
 
         // Register the service the package provides.
         $this->app->singleton('history', function ($app) {
@@ -75,17 +74,17 @@ class HistoryServiceProvider extends ServiceProvider
     {
         // Publishing the configuration file.
         $this->publishes([
-            __DIR__ . '/../config/history.php' => config_path('history.php'),
-        ], 'history');
+            __DIR__ . '/../config/history.php' => config_path('vdvt/history/history.php'),
+        ], 'vdvt');
 
         $this->publishes([
             __DIR__ . '/../database/migrations' => database_path('migrations'),
-        ], 'history');
+        ], 'vdvt');
 
         // Publishing the translation files.
         $this->publishes([
-            __DIR__ . '/../resources/lang' => resource_path('lang/vendor/vdvt'),
-        ], 'history');
+            __DIR__ . '/../resources/lang' => resource_path('lang/vendor/vdvt/history'),
+        ], 'vdvt');
 
         // Registering package commands.
         $this->commands([]);
