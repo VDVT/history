@@ -15,6 +15,9 @@ class HistoryServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        echo "<pre>";
+        print_r('loaded');
+        echo "</pre>";die;
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'history');
 
         // Publishing is only necessary when using the CLI.

@@ -23,6 +23,8 @@ class AuditHistoryTable extends Migration
             $table->text('new_value')->nullable();
             $table->string('type')->nullable();
             $table->string('path')->nullable();
+            $table->string('column')->nullable();
+            $table->string('table')->nullable();
             $table->timestamps();
             $table->engine = 'InnoDB';
         });

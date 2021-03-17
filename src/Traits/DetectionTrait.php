@@ -200,6 +200,8 @@ trait DetectionTrait
                         'current' => $current,
                         'target' => isset($targetName) ? $targetName : null,
                     ]),
+                    'column' => $attribute,
+                    'table' => $this->getTable(),
                     'old_value' => $origin,
                     'new_value' => $current,
                     'path' => $path,
